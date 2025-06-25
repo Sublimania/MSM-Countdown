@@ -1,0 +1,113 @@
+@font-face {
+    font-family: 'Cooper Black';
+    src: url('COOPBL.TTF') format('truetype');
+    font-display: swap;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    background: #000;
+    font-family: 'Cooper Black', cursive, sans-serif;
+    user-select: none;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: border-box;
+    color: #000;
+    background: transparent;
+    position: relative;
+    text-shadow: 0 0 3px rgba(255, 255, 255, .6), 0 0 6px rgba(255, 255, 255, .4);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: black url('background.png') no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0;
+    animation: fadeInBg 2.5s 0.2s forwards;
+    z-index: -1;
+}
+
+body,
+* {
+    pointer-events: none;
+}
+
+#header,
+#timer-wrapper {
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(30px);
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(.4, 0, .2, 1);
+}
+
+#header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    text-align: center;
+    max-width: 90vw;
+    animation: fadeSlideIn 1.5s 0.2s forwards;
+}
+
+#header img {
+    max-width: 100%;
+    max-height: 28vh;
+    object-fit: contain;
+    user-select: none;
+    transition: transform .3s ease;
+}
+
+#countdown-text {
+    margin: 0;
+    font-size: clamp(1rem, 3vw, 2rem);
+    color: #000;
+    text-shadow: 0 0 3px rgba(255, 255, 255, .6), 0 0 6px rgba(255, 255, 255, .4);
+    display: inline-block;
+    cursor: default;
+}
+
+#countdown-text span {
+    display: inline-block;
+    transform: translateY(0);
+    transition: transform .3s ease;
+}
+
+#timer-wrapper {
+    animation: fadeSlideIn 1.5s 1s forwards;
+}
+
+#t {
+    font-weight: 400;
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    color: #fff;
+    word-break: break-word;
+    text-shadow: 0 0 3px rgba(0, 0, 0, .95), 0 0 6px rgba(0, 0, 0, .8);
+    transform: translateY(0);
+    transition: transform .3s ease;
+}
+
+@keyframes fadeSlideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInBg {
+    to {
+        opacity: 1;
+    }
+}
