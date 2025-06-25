@@ -9,7 +9,7 @@
     <style>
         @font-face {
             font-family: 'Cooper Black';
-            src: url('COOPBL.TTF') format('truetype');
+            src: url('COOPBL.TTF') format('truetype')
         }
 
         html,
@@ -17,6 +17,9 @@
             height: 100%;
             margin: 0;
             background: #000;
+            font-family: 'Cooper Black', cursive, sans-serif;
+            user-select: none;
+            overflow: hidden
         }
 
         body {
@@ -26,13 +29,10 @@
             align-items: center;
             padding: 1rem;
             box-sizing: border-box;
-            font-family: 'Cooper Black', cursive, sans-serif;
-            color: #fff;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
-            user-select: none;
-            overflow: hidden;
-            position: relative;
+            color: #000;
             background: transparent;
+            position: relative;
+            text-shadow: 0 0 3px rgba(255, 255, 255, .6), 0 0 6px rgba(255, 255, 255, .4)
         }
 
         body::before {
@@ -42,87 +42,152 @@
             background: black url('background.png') no-repeat center center fixed;
             background-size: cover;
             opacity: 0;
-            animation: fadeInBg 2.5s 0.2s forwards;
-            z-index: -1;
+            animation: fadeInBg 2.5s .2s forwards;
+            z-index: -1
         }
 
         body,
         * {
-            pointer-events: none;
+            pointer-events: none
         }
 
         #header,
-        #t {
+        #timer-wrapper {
             pointer-events: auto;
             opacity: 0;
             transform: translateY(30px);
             animation-fill-mode: forwards;
-            animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            animation-timing-function: cubic-bezier(.4, 0, .2, 1)
         }
 
         #header {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: .5rem;
             text-align: center;
             max-width: 90vw;
-            animation: fadeSlideIn 1.5s 0.2s forwards;
+            animation: fadeSlideIn 1.5s .2s forwards
         }
 
         #header img {
             max-width: 100%;
-            max-height: 20vh;
+            max-height: 28vh;
             object-fit: contain;
             user-select: none;
+            transition: transform .3s ease
         }
 
-        h2 {
+        #countdown-text {
             margin: 0;
             font-size: clamp(1rem, 3vw, 2rem);
+            color: #000;
+            text-shadow: 0 0 3px rgba(255, 255, 255, .6), 0 0 6px rgba(255, 255, 255, .4);
+            display: inline-block;
+            cursor: default
+        }
+
+        #countdown-text span {
+            display: inline-block;
+            transform: translateY(0);
+            transition: transform .3s ease
+        }
+
+        #timer-wrapper {
+            animation: fadeSlideIn 1.5s 1s forwards
         }
 
         #t {
-            font-weight: normal;
+            font-weight: 400;
             font-size: clamp(1.5rem, 5vw, 3rem);
+            color: #fff;
             word-break: break-word;
-            animation: fadeSlideIn 1.5s 1s forwards;
+            text-shadow: 0 0 3px rgba(0, 0, 0, .95), 0 0 6px rgba(0, 0, 0, .8);
+            transform: translateY(0);
+            transition: transform .3s ease
         }
 
         @keyframes fadeSlideIn {
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0)
             }
         }
 
         @keyframes fadeInBg {
             to {
-                opacity: 1;
+                opacity: 1
             }
         }
     </style>
-    <script>
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('dragstart', e => e.preventDefault());
-    </script>
+    <script>document.addEventListener('contextmenu', e => e.preventDefault()); document.addEventListener('dragstart', e => e.preventDefault());</script>
 </head>
 
 <body>
     <div id="header">
-        <img src="logo.png" alt="My Singing Monsters" draggable="false" />
-        <h2>Update Countdown:</h2>
+        <img src="logo.png" alt="My Singing Monsters Logo" draggable="false" />
+        <h2 id="countdown-text">Update Countdown:</h2>
     </div>
-    <div id="t"></div>
+    <div id="timer-wrapper">
+        <div id="t"></div>
+    </div>
     <script>
         const target = 1750863600;
-        const formatTime = d => d <= 0 ? "It has arrived." :
-            `${Math.floor(d / 86400)}d ${String(Math.floor(d % 86400 / 3600)).padStart(2, '0')}h ${String(Math.floor(d % 3600 / 60)).padStart(2, '0')}m ${String(d % 60).padStart(2, '0')}s`;
-
+        const tElem = document.getElementById('t');
+        const wrapper = document.getElementById('timer-wrapper');
         (function update() {
-            document.getElementById('t').textContent = formatTime(target - Math.floor(Date.now() / 1000));
+            const d = target - Math.floor(Date.now() / 1000);
+            tElem.textContent = d <= 0 ? "It has arrived." : `${Math.floor(d / 86400)}d ${String(Math.floor(d % 86400 / 3600)).padStart(2, '0')}h ${String(Math.floor(d % 3600 / 60)).padStart(2, '0')}m ${String(d % 60).padStart(2, '0')}s`;
             setTimeout(update, 1000);
         })();
+        const amplitude = 10, period = 2000;
+        let start = null;
+        function floatAnim(ts) {
+            if (!start) start = ts;
+            const elapsed = ts - start;
+            const offset = amplitude * Math.sin((2 * Math.PI * elapsed) / period);
+            const scale = wrapper.matches(':hover') ? 1.08 : 1;
+            tElem.style.transform = `translateY(${offset.toFixed(2)}px) scale(${scale.toFixed(2)})`;
+            requestAnimationFrame(floatAnim);
+        }
+        wrapper.addEventListener('animationend', e => { if (e.animationName === 'fadeSlideIn') requestAnimationFrame(floatAnim) });
+        const logo = document.querySelector('#header img');
+        const logoAmp = 0.03, logoPeriod = 4000;
+        let logoStart = null;
+        function logoScale(ts) {
+            if (!logoStart) logoStart = ts;
+            const elapsed = ts - logoStart;
+            const scale = 1 + logoAmp * Math.sin((2 * Math.PI * elapsed) / logoPeriod);
+            logo.style.transform = `scale(${scale.toFixed(3)})`;
+            requestAnimationFrame(logoScale);
+        }
+        document.getElementById('header').addEventListener('animationend', e => {
+            if (e.animationName === 'fadeSlideIn') {
+                requestAnimationFrame(logoScale);
+                loopHopWave();
+            }
+        });
+        const textElem = document.getElementById('countdown-text');
+        const text = textElem.textContent;
+        textElem.textContent = '';
+        const spans = [...text].map(c => {
+            const s = document.createElement('span');
+            s.textContent = c;
+            textElem.appendChild(s);
+            return s;
+        });
+        function hopWave() {
+            spans.forEach((s, i) => {
+                setTimeout(() => {
+                    s.style.transform = 'translateY(-8px)';
+                    setTimeout(() => { s.style.transform = 'translateY(0)' }, 300);
+                }, i * 150);
+            });
+        }
+        function loopHopWave() {
+            hopWave();
+            setTimeout(loopHopWave, spans.length * 150 + 300 + 2700);
+        }
     </script>
 </body>
 
