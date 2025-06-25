@@ -10,34 +10,54 @@
         @font-face {
             font-family: 'Cooper Black';
             src: url('COOPBL.TTF') format('truetype');
-            font-weight: normal;
-            font-style: normal;
         }
 
         html,
         body {
             height: 100%;
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: white;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
-            position: relative;
-            overflow: hidden;
-            font-family: 'Cooper Black', cursive, sans-serif;
-            padding: 1rem;
-            box-sizing: border-box;
-            background: url('background.png') no-repeat center center fixed;
-            background-size: cover;
+            background: #000;
         }
 
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            box-sizing: border-box;
+            font-family: 'Cooper Black', cursive, sans-serif;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+            user-select: none;
+            overflow: hidden;
+            position: relative;
+            background: transparent;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: black url('background.png') no-repeat center center fixed;
+            background-size: cover;
+            opacity: 0;
+            animation: fadeInBg 2.5s 0.2s forwards;
+            z-index: -1;
+        }
+
+        body,
+        * {
+            pointer-events: none;
+        }
+
+        #header,
         #t {
-            font-weight: normal;
-            font-size: clamp(1.5rem, 5vw, 3rem);
-            color: white;
-            word-break: break-word;
+            pointer-events: auto;
+            opacity: 0;
+            transform: translateY(30px);
+            animation-fill-mode: forwards;
+            animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         #header {
@@ -46,44 +66,62 @@
             align-items: center;
             gap: 0.5rem;
             text-align: center;
-            color: white;
             max-width: 90vw;
+            animation: fadeSlideIn 1.5s 0.2s forwards;
         }
 
         #header img {
             max-width: 100%;
-            height: auto;
             max-height: 20vh;
             object-fit: contain;
+            user-select: none;
         }
 
         h2 {
             margin: 0;
             font-size: clamp(1rem, 3vw, 2rem);
         }
+
+        #t {
+            font-weight: normal;
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            word-break: break-word;
+            animation: fadeSlideIn 1.5s 1s forwards;
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInBg {
+            to {
+                opacity: 1;
+            }
+        }
     </style>
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
+    </script>
 </head>
 
 <body>
     <div id="header">
-        <img src="logo.png" alt="My Singing Monsters" />
+        <img src="logo.png" alt="My Singing Monsters" draggable="false" />
         <h2>Update Countdown:</h2>
     </div>
     <div id="t"></div>
     <script>
         const target = 1750863600;
-        function f(d) {
-            if (d <= 0) return "It has arrived.";
-            let days = Math.floor(d / 86400),
-                h = Math.floor((d % 86400) / 3600),
-                m = Math.floor((d % 3600) / 60),
-                s = d % 60;
-            return days + "d " + h.toString().padStart(2, "0") + "h " + m.toString().padStart(2, "0") + "m " + s.toString().padStart(2, "0") + "s";
-        }
-        (function u() {
-            let diff = target - Math.floor(Date.now() / 1000);
-            document.getElementById("t").textContent = f(diff);
-            setTimeout(u, 1000);
+        const formatTime = d => d <= 0 ? "It has arrived." :
+            `${Math.floor(d / 86400)}d ${String(Math.floor(d % 86400 / 3600)).padStart(2, '0')}h ${String(Math.floor(d % 3600 / 60)).padStart(2, '0')}m ${String(d % 60).padStart(2, '0')}s`;
+
+        (function update() {
+            document.getElementById('t').textContent = formatTime(target - Math.floor(Date.now() / 1000));
+            setTimeout(update, 1000);
         })();
     </script>
 </body>
