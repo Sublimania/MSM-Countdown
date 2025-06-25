@@ -50,11 +50,12 @@ const textElem = document.getElementById('countdown-text');
 const text = textElem.textContent;
 textElem.textContent = '';
 const spans = [...text].map(c => {
-    const s = document.createElement('span');
-    s.textContent = c;
-    textElem.appendChild(s);
-    return s;
+    const span = document.createElement('span');
+    span.innerHTML = c === ' ' ? '&nbsp;' : c;
+    textElem.appendChild(span);
+    return span;
 });
+
 function hopWave() {
     spans.forEach((s, i) => {
         setTimeout(() => {
