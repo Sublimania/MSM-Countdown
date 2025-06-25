@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>MSM Countdown</title>
     <link rel="icon" href="site.ico" type="image/x-icon" />
     <style>
@@ -27,25 +27,17 @@
             position: relative;
             overflow: hidden;
             font-family: 'Cooper Black', cursive, sans-serif;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('background.png') no-repeat center center;
+            padding: 1rem;
+            box-sizing: border-box;
+            background: url('background.png') no-repeat center center fixed;
             background-size: cover;
-            z-index: -1;
-            pointer-events: none;
         }
 
         #t {
             font-weight: normal;
-            font-size: 3rem;
+            font-size: clamp(1.5rem, 5vw, 3rem);
             color: white;
+            word-break: break-word;
         }
 
         #header {
@@ -55,6 +47,19 @@
             gap: 0.5rem;
             text-align: center;
             color: white;
+            max-width: 90vw;
+        }
+
+        #header img {
+            max-width: 100%;
+            height: auto;
+            max-height: 20vh;
+            object-fit: contain;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: clamp(1rem, 3vw, 2rem);
         }
     </style>
 </head>
