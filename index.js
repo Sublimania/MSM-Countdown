@@ -5,10 +5,34 @@ const target = 1750863600;
 const tElem = document.getElementById('t');
 const wrapper = document.getElementById('timer-wrapper');
 
+const webhookURL = "https://discord.com/api/webhooks/1387342881194381376/nJ5c3nis97JKWN1WSl-KGobjqa6xBtyBST2lzI8_aXfgQdTIIWAcMGfM4pXxCfi8k1Xp";
+const roleID = "1383541875641679923";
+
+let lastText = "";
+let pinged = false;
+
 (function update() {
     const d = target - Math.floor(Date.now() / 1000);
-    tElem.textContent = d <= 0 ? "It has arrived." :
+    const newText = d <= 0 ? "It has arrived." :
         `${Math.floor(d / 86400)}d ${String(Math.floor(d % 86400 / 3600)).padStart(2, '0')}h ${String(Math.floor(d % 3600 / 60)).padStart(2, '0')}m ${String(d % 60).padStart(2, '0')}s`;
+
+    if (newText !== lastText) {
+        lastText = newText;
+        tElem.textContent = newText;
+
+        const content = (newText === "It has arrived." && !pinged)
+            ? `<@&${roleID}> ${newText}`
+            : newText;
+
+        if (newText === "It has arrived.") pinged = true;
+
+        fetch(webhookURL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content })
+        });
+    }
+
     setTimeout(update, 1000);
 })();
 
